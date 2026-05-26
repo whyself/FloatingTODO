@@ -1,6 +1,6 @@
 {
   "name": "floatingtodo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Frameless Electron desktop todo widget.",
   "author": "FloatingTODO",

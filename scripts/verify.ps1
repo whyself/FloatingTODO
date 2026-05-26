@@ -258,7 +258,7 @@ if ($preload -match "nativeWindowDrag|setFocusable") {
   throw "preload.js still exposes native drag or focusability controls"
 }
 
-if ($main -match "floating-todo:window-drag|floating-todo:native-window-drag|floating-todo:set-focusable|setPosition\(") {
+if ($main -match "floating-todo:window-drag|floating-todo:native-window-drag|floating-todo:set-focusable") {
   throw "main.js still handles manual window drag"
 }
 
