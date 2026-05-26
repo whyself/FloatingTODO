@@ -12,9 +12,19 @@
   "main": "main.js",
   "scripts": {
     "start": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"Remove-Item Env:ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue; electron .\"",
+    "start:mac": "ELECTRON_RUN_AS_NODE= electron .",
+    "start:linux": "ELECTRON_RUN_AS_NODE= electron --ozone-platform=x11 .",
+    "start:linux:wayland": "ELECTRON_RUN_AS_NODE= electron --ozone-platform=wayland .",
     "check": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1",
     "smoke": "npm run check",
-    "dist": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$env:ELECTRON_BUILDER_CACHE=(Join-Path $PWD '.cache/electron-builder'); electron-builder --win portable; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; powershell -NoProfile -ExecutionPolicy Bypass -File scripts/set-exe-icon.ps1\""
+    "dist": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$env:ELECTRON_BUILDER_CACHE=(Join-Path $PWD '.cache/electron-builder'); electron-builder --win portable; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; powershell -NoProfile -ExecutionPolicy Bypass -File scripts/set-exe-icon.ps1\"",
+    "dist:mac": "electron-builder --mac",
+    "dist:mac:arm64": "electron-builder --mac --arm64",
+    "dist:mac:x64": "electron-builder --mac --x64",
+    "dist:linux": "electron-builder --linux",
+    "dist:linux:deb": "electron-builder --linux deb",
+    "dist:linux:rpm": "electron-builder --linux rpm",
+    "dist:linux:AppImage": "electron-builder --linux AppImage"
   },
   "build": {
     "appId": "io.github.whyself.floatingtodo",
@@ -35,6 +45,16 @@
       "icon": "assets/icon.ico",
       "target": "portable",
       "signAndEditExecutable": false
+    },
+    "mac": {
+      "icon": "assets/icon.png",
+      "target": "dmg",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": ["AppImage", "deb", "rpm"],
+      "category": "Utility"
     },
     "nsis": {
       "installerIcon": "assets/icon.ico",
