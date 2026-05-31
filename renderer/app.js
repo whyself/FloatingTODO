@@ -20,6 +20,20 @@ topAddComposer.addEventListener("submit", (event) => {
 });
 
 newTaskInput.addEventListener("keydown", (event) => {
+  if (focusAdjacentTaskInput(event, newTaskInput, newTaskDdlInput, "ArrowRight")) return;
+  if (event.key === "Enter" && !event.isComposing) {
+    event.preventDefault();
+    commitNewTask();
+    return;
+  }
+  if (event.key === "Escape") {
+    closeAddComposer(true);
+    addTaskToggle.focus();
+  }
+});
+
+newTaskDdlInput.addEventListener("keydown", (event) => {
+  if (focusAdjacentTaskInput(event, newTaskDdlInput, newTaskInput, "ArrowLeft")) return;
   if (event.key === "Enter" && !event.isComposing) {
     event.preventDefault();
     commitNewTask();

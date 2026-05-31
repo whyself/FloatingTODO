@@ -14,11 +14,43 @@ function normalizeTaskSubtasks(task) {
 }
 
 function getTaskTitle(task) {
-  return task.querySelector(".task-title")?.textContent.trim() || "Untitled task";
+  return task.querySelector(":scope > .task-head .edit-name-input")?.value.trim() ||
+    task.querySelector(".task-title")?.textContent.trim() ||
+    "Untitled task";
+}
+
+function getTaskDdl(task) {
+  return task.querySelector(":scope > .task-head .edit-ddl-input")?.value.trim() ||
+    task.querySelector(":scope > .task-head .task-ddl")?.textContent.trim() ||
+    "";
+}
+
+function setTaskDdl(task, ddl) {
+  const label = task?.querySelector(":scope > .task-head .task-ddl");
+  if (!label) return;
+  const next = String(ddl || "").trim();
+  label.textContent = next;
+  label.hidden = !next;
 }
 
 function getSubtaskTitle(row) {
-  return row.querySelector(".subtask-title")?.textContent.trim() || "Untitled subtask";
+  return row.querySelector(".edit-name-input")?.value.trim() ||
+    row.querySelector(".subtask-title")?.textContent.trim() ||
+    "Untitled subtask";
+}
+
+function getSubtaskDdl(row) {
+  return row.querySelector(".edit-ddl-input")?.value.trim() ||
+    row.querySelector(".subtask-ddl")?.textContent.trim() ||
+    "";
+}
+
+function setSubtaskDdl(row, ddl) {
+  const label = row?.querySelector(".subtask-ddl");
+  if (!label) return;
+  const next = String(ddl || "").trim();
+  label.textContent = next;
+  label.hidden = !next;
 }
 
 function isTaskDone(task) {

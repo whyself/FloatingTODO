@@ -160,7 +160,7 @@ function finishDrag(event) {
     ensureSubtaskChrome(targetTask);
 
     if (type === "task") {
-      const row = createSubtaskElement(getTaskTitle(element), isTaskDone(element), element.dataset.taskId);
+      const row = createSubtaskElement(getTaskTitle(element), isTaskDone(element), element.dataset.taskId, getTaskDdl(element));
       placeholder.replaceWith(row);
       element.remove();
     } else {
@@ -172,7 +172,7 @@ function finishDrag(event) {
     normalizeTaskSubtasks(targetTask);
   } else {
     if (type === "subtask") {
-      const task = createTaskElement(getSubtaskTitle(element), isSubtaskDone(element), element.dataset.taskId);
+      const task = createTaskElement(getSubtaskTitle(element), isSubtaskDone(element), element.dataset.taskId, getSubtaskDdl(element));
       placeholder.replaceWith(task);
       element.remove();
       normalizeTaskSubtasks(sourceTask);

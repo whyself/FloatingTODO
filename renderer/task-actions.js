@@ -1,6 +1,9 @@
 function closeAddComposer(clearValue) {
   const previousHeight = snapshotWidgetHeight();
-  if (clearValue) newTaskInput.value = "";
+  if (clearValue) {
+    newTaskInput.value = "";
+    newTaskDdlInput.value = "";
+  }
   taskAddCard.classList.remove("is-open");
   addTaskToggle.setAttribute("aria-expanded", "false");
   animateWidgetHeight(previousHeight);
@@ -8,12 +11,13 @@ function closeAddComposer(clearValue) {
 function commitNewTask() {
   const taskName = newTaskInput.value.trim();
   if (!taskName) return;
+  const ddl = newTaskDdlInput.value.trim();
 
   const wasScrollable = todoWidget.classList.contains("is-scrollable");
   const holdId = holdDesktopWindowHeight(getWidgetMaxHeight());
   const previousRects = snapshotMovables();
   const previousHeight = snapshotWidgetHeight();
-  const task = createTaskElement(taskName);
+  const task = createTaskElement(taskName, false, "", ddl);
   task.classList.add("is-new");
   taskList.insertBefore(task, taskAddCard);
   animateWidgetHeight(previousHeight);
@@ -25,6 +29,7 @@ function commitNewTask() {
   }
 
   newTaskInput.value = "";
+  newTaskDdlInput.value = "";
   taskAddCard.classList.add("is-open");
   addTaskToggle.setAttribute("aria-expanded", "true");
   schedulePersist();
@@ -45,17 +50,18 @@ function settleWidgetHeightAfterTaskIntro(task, holdId) {
   window.setTimeout(settle, 480);
 }
 
-function createTaskElement(title, done = false, id = "") {
+function createTaskElement(title, done = false, id = "", ddl = "") {
   const task = document.createElement("div");
   task.className = `task-item flex flex-col rounded-lg p-standard${done ? " is-done" : ""}`;
   assignTaskId(task, "task", id);
   task.innerHTML = `
     <div class="task-head flex items-center justify-between">
-      <div class="flex items-center gap-standard">
+      <div class="task-title-group flex items-center gap-standard">
         <button aria-label="Complete task" class="complete-toggle ${done ? "is-checked text-primary" : "text-outline hover:text-primary transition-colors"} flex items-center justify-center" type="button">
           <span class="complete-icon material-symbols-outlined" style="font-variation-settings: 'FILL' ${done ? 1 : 0};">${done ? "check_circle" : "circle"}</span>
         </button>
         <span class="task-title font-task-text text-task-text text-on-surface"></span>
+        <span class="task-ddl font-task-subtext text-task-subtext text-primary"></span>
       </div>
       <div class="flex items-center gap-2">
         <div class="done-actions flex gap-1">
@@ -69,10 +75,11 @@ function createTaskElement(title, done = false, id = "") {
     <div class="subtask-panel"><div class="subtask-inner"></div></div>
   `;
   task.querySelector(".task-title").textContent = title;
+  setTaskDdl(task, ddl);
   return task;
 }
 
-function createSubtaskElement(title, done = false, id = "") {
+function createSubtaskElement(title, done = false, id = "", ddl = "") {
   const row = document.createElement("div");
   row.className = "subtask-row flex items-center gap-standard";
   assignTaskId(row, "subtask", id);
@@ -81,12 +88,14 @@ function createSubtaskElement(title, done = false, id = "") {
       <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' ${done ? 1 : 0};">${done ? "check_circle" : "circle"}</span>
     </button>
     <span class="subtask-title font-task-subtext text-task-subtext ${done ? "text-outline line-through" : "text-on-surface"}"></span>
+    <span class="subtask-ddl font-task-subtext text-task-subtext text-primary"></span>
     <div class="subtask-actions flex gap-1">
       <button aria-label="Edit subtask" class="edit-task edit-subtask rounded-md flex items-center justify-center" type="button"><span class="material-symbols-outlined text-[16px]">edit</span></button>
       <button aria-label="Delete subtask" class="delete-task delete-subtask rounded-md flex items-center justify-center" type="button"><span class="material-symbols-outlined text-[16px]">delete</span></button>
     </div>
   `;
   row.querySelector(".subtask-title").textContent = title;
+  setSubtaskDdl(row, ddl);
   return row;
 }
 
@@ -212,31 +221,61 @@ function getSwipePreviewOffset(deltaX) {
   return Math.max(-52, Math.min(52, deltaX * .38));
 }
 
+function focusAdjacentTaskInput(event, fromInput, toInput, direction) {
+  if (!toInput || !fromInput) return false;
+  if (event.key !== direction) return false;
+  const movingRight = direction === "ArrowRight";
+  const atEdge = movingRight
+    ? fromInput.selectionStart === fromInput.value.length && fromInput.selectionEnd === fromInput.value.length
+    : fromInput.selectionStart === 0 && fromInput.selectionEnd === 0;
+
+  if (!atEdge) return false;
+  event.preventDefault();
+  toInput.focus();
+  if (movingRight) toInput.setSelectionRange(0, 0);
+  else toInput.setSelectionRange(toInput.value.length, toInput.value.length);
+  return true;
+}
+
 function startEdit(item) {
   if (!item || item.classList.contains("is-editing")) return;
 
-  const label = item.classList.contains("subtask-row")
+  const isSubtask = item.classList.contains("subtask-row");
+  const label = isSubtask
     ? item.querySelector(".subtask-title")
     : item.querySelector(":scope > .task-head .task-title");
+  const ddlLabel = isSubtask
+    ? item.querySelector(".subtask-ddl")
+    : item.querySelector(":scope > .task-head .task-ddl");
 
   if (!label) return;
 
   const previousText = label.textContent.trim();
+  const previousDdl = ddlLabel?.textContent.trim() || "";
   const shell = document.createElement("span");
   shell.className = "edit-name-shell flex flex-1 items-center gap-2 px-2 py-0 bg-white/[0.02] rounded-lg border border-white/[0.04] focus-within:bg-white/[0.05] focus-within:border-white/10";
 
   const input = document.createElement("input");
-  input.className = item.classList.contains("subtask-row")
+  input.className = isSubtask
     ? "edit-name-input bg-transparent border-none w-full font-task-subtext text-task-subtext text-on-surface focus:ring-0 p-0 caret-primary"
     : "edit-name-input bg-transparent border-none w-full font-task-text text-task-text text-on-surface focus:ring-0 p-0 caret-primary";
   input.type = "text";
   input.value = previousText;
-  input.setAttribute("aria-label", item.classList.contains("subtask-row") ? "Edit subtask name" : "Edit task name");
+  input.setAttribute("aria-label", isSubtask ? "Edit subtask name" : "Edit task name");
 
   shell.appendChild(input);
+  let ddlInput = null;
+  ddlInput = document.createElement("input");
+  ddlInput.className = "task-ddl-input edit-ddl-input bg-transparent border-none font-task-subtext text-task-subtext text-primary focus:ring-0 p-0 caret-primary";
+  ddlInput.type = "text";
+  ddlInput.value = previousDdl;
+  ddlInput.placeholder = "DDL";
+  ddlInput.setAttribute("aria-label", isSubtask ? "Edit subtask DDL" : "Edit task DDL");
+  shell.appendChild(ddlInput);
   const previousHeight = snapshotWidgetHeight();
   item.classList.add("is-editing");
   label.replaceWith(shell);
+  if (ddlLabel) ddlLabel.hidden = true;
   animateWidgetHeight(previousHeight);
   input.focus();
   input.select();
@@ -247,14 +286,21 @@ function startEdit(item) {
     finished = true;
     const previousHeight = snapshotWidgetHeight();
     const next = save ? input.value.trim() : previousText;
+    const nextDdl = save ? ddlInput?.value.trim() || "" : previousDdl;
     label.textContent = next || previousText;
     shell.replaceWith(label);
+    if (ddlLabel) {
+      ddlLabel.hidden = false;
+      if (isSubtask) setSubtaskDdl(item, nextDdl);
+      else setTaskDdl(item, nextDdl);
+    }
     item.classList.remove("is-editing");
     animateWidgetHeight(previousHeight);
-    if (save && label.textContent.trim() !== previousText) schedulePersist();
+    if (save && (label.textContent.trim() !== previousText || nextDdl !== previousDdl)) schedulePersist();
   };
 
   input.addEventListener("keydown", (event) => {
+    if (focusAdjacentTaskInput(event, input, ddlInput, "ArrowRight")) return;
     if (event.key === "Enter" && !event.isComposing) {
       event.preventDefault();
       finish(true);
@@ -264,5 +310,23 @@ function startEdit(item) {
       finish(false);
     }
   });
-  input.addEventListener("blur", () => finish(true), { once: true });
+  ddlInput?.addEventListener("keydown", (event) => {
+    if (focusAdjacentTaskInput(event, ddlInput, input, "ArrowLeft")) return;
+    if (event.key === "Enter" && !event.isComposing) {
+      event.preventDefault();
+      finish(true);
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      finish(false);
+    }
+  });
+  const finishWhenEditShellLosesFocus = () => {
+    window.setTimeout(() => {
+      if (!shell.contains(document.activeElement)) finish(true);
+    }, 0);
+  };
+
+  input.addEventListener("blur", finishWhenEditShellLosesFocus);
+  ddlInput?.addEventListener("blur", finishWhenEditShellLosesFocus);
 }

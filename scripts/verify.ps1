@@ -278,4 +278,20 @@ if ($scripts -notmatch "initializePersistence" -or $scripts -notmatch "exportTas
   throw "renderer scripts are missing persistence initialization or serialization"
 }
 
+if ($index -notmatch 'id="newTaskDdlInput"' -or $scripts -notmatch "getTaskDdl" -or $scripts -notmatch "setTaskDdl" -or $scripts -notmatch "ddl:" -or $styles -notmatch "\.task-ddl") {
+  throw "task DDL add/edit/render/persistence support is missing"
+}
+
+if ($scripts -notmatch "getSubtaskDdl" -or $scripts -notmatch "setSubtaskDdl" -or $styles -notmatch "\.subtask-ddl") {
+  throw "subtask DDL render/edit/persistence support is missing"
+}
+
+if ($scripts -notmatch "focusAdjacentTaskInput" -or $scripts -notmatch "ArrowLeft" -or $scripts -notmatch "ArrowRight") {
+  throw "task DDL inputs do not support left/right arrow focus switching"
+}
+
+if ($styles -notmatch "\.task-ddl\s*\{[\s\S]*?font-size:\s*14px;[\s\S]*?font-weight:\s*700;" -or $styles -notmatch "\.subtask-ddl\s*\{[\s\S]*?font-size:\s*13px;[\s\S]*?font-weight:\s*700;" -or $styles -notmatch "\.task-ddl-input\s*\{[\s\S]*?text-align:\s*left;") {
+  throw "DDL labels are not emphasized or DDL input cursor is not left-aligned"
+}
+
 "Verification passed."

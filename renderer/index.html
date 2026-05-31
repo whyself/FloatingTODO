@@ -41,11 +41,12 @@ tailwind.config = {
 <main class="task-list flex flex-col" id="taskList">
 <div class="task-item has-subtasks flex flex-col rounded-lg p-standard">
 <div class="task-head flex items-center justify-between">
-<div class="flex items-center gap-standard">
+<div class="task-title-group flex items-center gap-standard">
 <button aria-label="Complete task" class="complete-toggle text-outline hover:text-primary transition-colors flex items-center justify-center" type="button">
 <span class="complete-icon material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">circle</span>
 </button>
 <span class="task-title font-task-text text-task-text text-on-surface">Design System Review</span>
+<span class="task-ddl font-task-subtext text-task-subtext text-primary" hidden></span>
 </div>
 <div class="flex items-center gap-2">
 <div class="done-actions flex gap-1">
@@ -62,6 +63,7 @@ tailwind.config = {
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
 </button>
 <span class="subtask-title font-task-subtext text-task-subtext text-outline line-through">Color Palette</span>
+<span class="subtask-ddl font-task-subtext text-task-subtext text-primary" hidden></span>
 <div class="subtask-actions flex gap-1">
 <button aria-label="Edit subtask" class="edit-task edit-subtask rounded-md flex items-center justify-center" type="button"><span class="material-symbols-outlined text-[16px]">edit</span></button>
 <button aria-label="Delete subtask" class="delete-task delete-subtask rounded-md flex items-center justify-center" type="button"><span class="material-symbols-outlined text-[16px]">delete</span></button>
@@ -72,6 +74,7 @@ tailwind.config = {
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">circle</span>
 </button>
 <span class="subtask-title font-task-subtext text-task-subtext text-on-surface">Typography</span>
+<span class="subtask-ddl font-task-subtext text-task-subtext text-primary" hidden></span>
 <div class="subtask-actions flex gap-1">
 <button aria-label="Edit subtask" class="edit-task edit-subtask rounded-md flex items-center justify-center" type="button"><span class="material-symbols-outlined text-[16px]">edit</span></button>
 <button aria-label="Delete subtask" class="delete-task delete-subtask rounded-md flex items-center justify-center" type="button"><span class="material-symbols-outlined text-[16px]">delete</span></button>
@@ -81,11 +84,12 @@ tailwind.config = {
 </div>
 <div class="task-item is-done flex flex-col rounded-lg p-standard">
 <div class="task-head flex items-center justify-between">
-<div class="flex items-center gap-standard">
+<div class="task-title-group flex items-center gap-standard">
 <button aria-label="Complete task" class="complete-toggle is-checked text-primary flex items-center justify-center rounded-full" type="button">
 <span class="complete-icon material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
 </button>
 <span class="task-title font-task-text text-task-text text-on-surface">Weekly Sync Prep</span>
+<span class="task-ddl font-task-subtext text-task-subtext text-primary" hidden></span>
 </div>
 <div class="flex items-center gap-2">
 <div class="done-actions flex gap-1">
@@ -100,11 +104,12 @@ tailwind.config = {
 </div>
 <div class="task-item flex flex-col rounded-lg p-standard">
 <div class="task-head flex items-center justify-between">
-<div class="flex items-center gap-standard">
+<div class="task-title-group flex items-center gap-standard">
 <button aria-label="Complete task" class="complete-toggle text-outline hover:text-primary transition-colors flex items-center justify-center" type="button">
 <span class="complete-icon material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">circle</span>
 </button>
 <span class="task-title font-task-text text-task-text text-on-surface">Buy Groceries</span>
+<span class="task-ddl font-task-subtext text-task-subtext text-primary" hidden></span>
 </div>
 <div class="flex items-center gap-2">
 <div class="done-actions flex gap-1">
@@ -124,6 +129,7 @@ tailwind.config = {
 </button>
 <form class="top-add-input flex flex-1 items-center gap-2 px-2 py-0 bg-white/[0.02] rounded-lg border border-white/[0.04] focus-within:bg-white/[0.05] focus-within:border-white/10" id="topAddComposer">
 <input aria-label="New task" autocomplete="off" class="bg-transparent border-none w-full font-task-text text-task-text text-on-surface focus:ring-0 p-0 caret-primary" id="newTaskInput" type="text">
+<input aria-label="Task DDL" autocomplete="off" class="task-ddl-input bg-transparent border-none font-task-subtext text-task-subtext text-primary focus:ring-0 p-0 caret-primary" id="newTaskDdlInput" placeholder="DDL" type="text">
 </form>
 </div>
 </div>

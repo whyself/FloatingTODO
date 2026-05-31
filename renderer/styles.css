@@ -83,6 +83,35 @@ body.is-alt-window-dragging .task-list * {
   display: inline-block;
   transition: opacity 180ms ease;
 }
+.task-title-group {
+  min-width: 0;
+  flex: 1;
+}
+.task-title-group .complete-toggle {
+  flex: 0 0 auto;
+}
+.task-title-group .task-title {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.task-ddl {
+  flex: 0 0 auto;
+  max-inline-size: 86px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #406651;
+  font-size: 14px;
+  font-weight: 700;
+}
+.task-ddl[hidden] { display: none; }
+.task-title-group .task-ddl {
+  font-size: 14px;
+  font-weight: 700;
+}
 .task-item.is-done .task-title { opacity: .68; }
 .task-item.is-done .task-title,
 .subtask-title.line-through { text-decoration: line-through; }
@@ -147,6 +176,19 @@ body.is-alt-window-dragging .task-list * {
   opacity: 1;
   pointer-events: auto;
   transform: scaleX(1);
+}
+.task-ddl-input {
+  appearance: none;
+  -webkit-appearance: none;
+  inline-size: 64px;
+  min-inline-size: 48px;
+  flex: 0 0 64px;
+  color: #406651;
+  font-weight: 700;
+  text-align: left;
+}
+.task-ddl-input::placeholder {
+  color: rgba(64,102,81,.52);
 }
 .progress-track {
   display: none;
@@ -217,6 +259,24 @@ body.is-alt-window-dragging .task-list * {
 .subtask-row > .subtask-title {
   min-width: 0;
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.subtask-ddl {
+  flex: 0 0 auto;
+  max-inline-size: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #406651;
+  font-size: 13px;
+  font-weight: 700;
+}
+.subtask-ddl[hidden] { display: none; }
+.subtask-row > .subtask-ddl {
+  font-size: 13px;
+  font-weight: 700;
 }
 .task-item:not(.is-done):not(.add-task-card):hover:not(:has(.subtask-row:hover)) {
   background:
@@ -314,6 +374,13 @@ body.is-alt-window-dragging .task-list * {
 .edit-name-input:focus { box-shadow: none; }
 .task-head .edit-name-shell,
 .subtask-row .edit-name-shell { flex: 1; }
+.task-head .edit-name-shell {
+  max-inline-size: 100%;
+}
+.edit-ddl-input {
+  inline-size: 70px;
+  flex-basis: 70px;
+}
 .task-item.is-swipe-preview,
 .subtask-row.is-swipe-preview { transition: transform 120ms ease; }
 .task-item.is-dragging,

@@ -36,12 +36,14 @@ function exportTasks() {
   return getTaskItems().map((task, index) => ({
     id: task.dataset.taskId,
     title: getTaskTitle(task),
+    ddl: getTaskDdl(task),
     completed: isTaskDone(task),
     collapsed: task.classList.contains("is-collapsed"),
     order: index,
     children: getSubtaskRows(task).map((row, childIndex) => ({
       id: row.dataset.taskId,
       title: getSubtaskTitle(row),
+      ddl: getSubtaskDdl(row),
       completed: isSubtaskDone(row),
       order: childIndex
     }))
@@ -49,12 +51,22 @@ function exportTasks() {
 }
 
 function createTaskFromData(taskData) {
-  const task = createTaskElement(taskData?.title || "Untitled task", Boolean(taskData?.completed), taskData?.id);
+  const task = createTaskElement(
+    taskData?.title || "Untitled task",
+    Boolean(taskData?.completed),
+    taskData?.id,
+    taskData?.ddl || ""
+  );
   const inner = task.querySelector(".subtask-inner");
 
   if (Array.isArray(taskData?.children)) {
     taskData.children.forEach((child) => {
-      inner.appendChild(createSubtaskElement(child?.title || "Untitled subtask", Boolean(child?.completed), child?.id));
+      inner.appendChild(createSubtaskElement(
+        child?.title || "Untitled subtask",
+        Boolean(child?.completed),
+        child?.id,
+        child?.ddl || ""
+      ));
     });
   }
 

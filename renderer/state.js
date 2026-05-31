@@ -2,6 +2,7 @@ const addTaskToggle = document.getElementById("addTaskToggle");
 const taskAddCard = document.getElementById("taskAddCard");
 const topAddComposer = document.getElementById("topAddComposer");
 const newTaskInput = document.getElementById("newTaskInput");
+const newTaskDdlInput = document.getElementById("newTaskDdlInput");
 const taskList = document.getElementById("taskList");
 const todoWidget = taskList;
 const LONG_PRESS_MS = 280;
