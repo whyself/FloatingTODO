@@ -284,6 +284,7 @@ function startEdit(item) {
   const finish = (save) => {
     if (finished) return;
     finished = true;
+    finishActiveEdit = () => false;
     const previousHeight = snapshotWidgetHeight();
     const next = save ? input.value.trim() : previousText;
     const nextDdl = save ? ddlInput?.value.trim() || "" : previousDdl;
@@ -298,6 +299,11 @@ function startEdit(item) {
     animateWidgetHeight(previousHeight);
     if (save && (label.textContent.trim() !== previousText || nextDdl !== previousDdl)) schedulePersist();
   };
+  finishActiveEdit = () => {
+    if (finished) return false;
+    finish(true);
+    return true;
+  };
 
   input.addEventListener("keydown", (event) => {
     if (focusAdjacentTaskInput(event, input, ddlInput, "ArrowRight")) return;
@@ -310,6 +316,11 @@ function startEdit(item) {
       finish(false);
     }
   });
+  const scheduleEditPersist = () => {
+    if (input.value.trim() !== previousText || ddlInput.value.trim() !== previousDdl) schedulePersist();
+  };
+  input.addEventListener("input", scheduleEditPersist);
+  ddlInput.addEventListener("input", scheduleEditPersist);
   ddlInput?.addEventListener("keydown", (event) => {
     if (focusAdjacentTaskInput(event, ddlInput, input, "ArrowLeft")) return;
     if (event.key === "Enter" && !event.isComposing) {

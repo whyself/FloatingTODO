@@ -294,4 +294,12 @@ if ($styles -notmatch "\.task-ddl\s*\{[\s\S]*?font-size:\s*14px;[\s\S]*?font-wei
   throw "DDL labels are not emphasized or DDL input cursor is not left-aligned"
 }
 
+if ($scripts -notmatch "scheduleEditPersist" -or $scripts -notmatch 'addEventListener\("input", scheduleEditPersist\)') {
+  throw "task/subtask edit fields do not autosave while typing"
+}
+
+if ($scripts -notmatch "finishActiveEdit" -or $scripts -notmatch 'window\.addEventListener\("blur", \(\) => finishActiveEdit\(\)\)' -or $scripts -notmatch 'floating-todo-window-blur", \(\) => finishActiveEdit\(\)') {
+  throw "editing mode does not finish when the app loses focus"
+}
+
 "Verification passed."

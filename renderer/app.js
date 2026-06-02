@@ -122,12 +122,14 @@ document.addEventListener("keyup", (event) => {
   if (event.key === "Alt") setAltWindowDrag(false);
 });
 
+window.addEventListener("blur", () => finishActiveEdit());
 window.addEventListener("blur", () => {
   setAltWindowDrag(false);
   closeAddComposer(false);
 });
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) return;
+  finishActiveEdit();
   setAltWindowDrag(false);
   closeAddComposer(false);
 });
@@ -210,6 +212,7 @@ taskList.addEventListener("pointercancel", (event) => {
 taskList.addEventListener("pointerleave", handlePointerOutsideWindow);
 
 window.addEventListener("floating-todo-window-blur", handlePointerOutsideWindow);
+window.addEventListener("floating-todo-window-blur", () => finishActiveEdit());
 getTaskItems().forEach(normalizeTaskSubtasks);
 ensureTaskIds();
 initializeWidgetHeight();

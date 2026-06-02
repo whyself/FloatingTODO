@@ -24,3 +24,4 @@ let nextLocalTaskId = 1;
 let persistenceReady = false;
 let applyingPersistedTasks = false;
 let saveTimer = 0;
+let finishActiveEdit = () => false;
